@@ -9,7 +9,6 @@ int main() {
     cin >> start;
     cout << "Enter the ending word: ";
     cin >> end;
-
     vector<string> ladder = generate_word_ladder(start, end, word_list);
     print_word_ladder(ladder);
 

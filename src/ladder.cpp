@@ -145,18 +145,20 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         cout << "Error: End word must be in the dictionary." << endl;
         return {};
     }
-
-    queue<vector<string>> ladder_queue;  // BFS queue stores paths (vectors)
-    unordered_set<string> visited;       // Track visited words
+    
+    // using BFS logic (queue to store paths)
+    queue<vector<string>> ladder_queue; 
+    unordered_set<string> visited;       
 
     ladder_queue.push({start});
-    visited.insert(start);  // Mark start word as visited immediately
+    visited.insert(start);  
 
     while (!ladder_queue.empty()) {
         int level_size = ladder_queue.size();
-        unordered_set<string> level_visited; // Track words visited in this level
+        unordered_set<string> level_visited; 
 
         for (int i = 0; i < level_size; i++) {
+            // current ladder = front
             vector<string> current_ladder = ladder_queue.front();
             ladder_queue.pop();
             string last_word = current_ladder.back();
@@ -167,7 +169,8 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                     new_ladder.push_back(word);
                     
                     if (word == end) {
-                        return new_ladder; // Found the shortest ladder
+                        // found the shortest ladder
+                        return new_ladder; 
                     }
 
                     ladder_queue.push(new_ladder);
@@ -180,11 +183,10 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         visited.insert(level_visited.begin(), level_visited.end());
     }
 
-    return {};  // No word ladder found
+    return {}; 
 }
 
 
-// Print the word ladder
 void print_word_ladder(const vector<string>& ladder) {
     if (ladder.empty()) {
         cout << "No word ladder found." << endl;
@@ -196,7 +198,7 @@ void print_word_ladder(const vector<string>& ladder) {
         cout << ladder[i];
         if (i != ladder.size() - 1) cout << " ";
     }
-    cout << " \n"; // Extra space before newline to match expected output
+    cout << " \n"; 
 }
 
 void verify_word_ladder(const vector<string>& ladder, const set<string>& word_list) {
@@ -222,7 +224,7 @@ void verify_word_ladder(const vector<string>& ladder, const set<string>& word_li
 
 
 
-// Verify if a given word ladder is valid
+// verify if a given word ladder is valid
 void verify_word_ladder() {
 
     set<string> word_list;
