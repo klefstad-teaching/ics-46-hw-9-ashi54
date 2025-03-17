@@ -63,16 +63,17 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
     reverse(path.begin(), path.end()); // Reverse to get correct order
     return path;
 }
+
 void print_path(const vector<int>& path, int total_cost) {
-    if (path.empty()) {
-        cout << "No path found." << endl;
+    if (path.empty() || total_cost == INF) { 
+        cout << "No path found." << endl;  
         return;
     }
 
     for (size_t i = 0; i < path.size(); i++) {
-        if (i > 0) cout << " "; // Space separator
+        if (i > 0) cout << " ";
         cout << path[i];
     }
 
-    cout << " \nTotal cost is " << total_cost << endl; 
+    cout << " \nTotal cost is " << total_cost << endl;
 }
