@@ -108,9 +108,6 @@ bool is_adjacent(const string& word1, const string& word2) {
 }
 
 
-
-
-
 string to_lower(const string& word) {
     string lower_word = word;
     for (char& c : lower_word) {
