@@ -50,17 +50,19 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
 
 vector<int> extract_shortest_path(const vector<int>& distances, const vector<int>& previous, int destination) {
     vector<int> path;
-    if (distances[destination] == INF) {
-        return path; // No path found
+    
+    // If destination is unreachable, return "No path found"
+    if (distances[destination] == INF || previous[destination] == -1) {
+        return path;
     }
 
-    for (int v = destination; v != UNDEFINED; v = previous[v]) {
+    // Traverse back using `previous` to reconstruct the path
+    for (int v = destination; v != -1; v = previous[v]) {
         path.push_back(v);
     }
     reverse(path.begin(), path.end()); // Reverse to get correct order
     return path;
 }
-
 void print_path(const vector<int>& path, int total_cost) {
     if (path.empty()) {
         cout << "No path found." << endl;
