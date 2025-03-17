@@ -4,29 +4,41 @@
 
 #define my_assert(e) {cout << #e << ((e) ? " passed": " failed") << endl;}
 
-
-string to_lower(const string& word) {
-    string lower_word = word;
-    for (char& c : lower_word) {
-        c = tolower(c);
-    }
-    return lower_word;
+/*
+void error(string word1, string word2, string msg);
+*/
+void error(string word1, string word2, string msg) {
+    cerr << "Error: " << msg << " [" << word1 << " -> " << word2 << "]" << endl;
 }
 
-void load_words(set<string>& word_list, const string& file_name) {
-    ifstream file(file_name);
-    if (!file) {
-        cerr << "Error: Cannot open file " << file_name << endl;
-        exit(1);
-    }
 
-    string word;
-    while (file >> word) {
-        word_list.insert(to_lower(word));
-    }
+bool edit_distance_within(const string& str1, const string& str2, int d) {
+    int len1 = str1.size();
+    int len2 = str2.size();
 
-    file.close();
+    if (abs(len1 - len2) > d) return false;
+
+    int diff_count = 0, i = 0, j = 0;
+    
+    while (i < len1 && j < len2) {
+        if (str1[i] != str2[j]) {
+            diff_count++;
+            if (diff_count > d) return false;
+            if (len1 > len2) i++; // Deletion case
+            else if (len1 < len2) j++; // Insertion case
+            else { i++; j++; } // Substitution case
+        } else {
+            i++; j++;
+        }
+    }
+    
+    return (diff_count <= d);
 }
+
+
+/*
+bool is_adjacent(const string& word1, const string& word2);
+*/
 
 bool is_adjacent(const string& word1, const string& word2) {
     /*
@@ -92,6 +104,34 @@ bool is_adjacent(const string& word1, const string& word2) {
     // if dif == 1 (correct), dif = 0 and the diff = 1 (correct) -> both return false
     return (differences == 1) || (differences == 0 && abs(lenFirst - lenSecond) == 1);
 }
+
+
+
+
+
+string to_lower(const string& word) {
+    string lower_word = word;
+    for (char& c : lower_word) {
+        c = tolower(c);
+    }
+    return lower_word;
+}
+
+void load_words(set<string>& word_list, const string& file_name) {
+    ifstream file(file_name);
+    if (!file) {
+        cerr << "Error: Cannot open file " << file_name << endl;
+        exit(1);
+    }
+
+    string word;
+    while (file >> word) {
+        word_list.insert(to_lower(word));
+    }
+
+    file.close();
+}
+
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
     string start = to_lower(begin_word);
