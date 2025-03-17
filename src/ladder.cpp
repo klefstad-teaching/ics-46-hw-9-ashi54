@@ -41,6 +41,8 @@ bool is_adjacent(const string& word1, const string& word2);
 */
 
 bool is_adjacent(const string& word1, const string& word2) {
+    // boundary condition if both the words are the same
+    if (word1 == word2) return true; 
     /*
     ex.
     ashi vs adi
@@ -147,35 +149,28 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         return {};
     }
 
-    queue<stack<string>> ladder_queue; // Queue of ladders (stored as stacks)
-    set<string> visited; // Track visited words
+    queue<vector<string>> ladder_queue;  // BFS queue stores paths (vectors)
+    unordered_set<string> visited;       // Track visited words
 
-    stack<string> initial_ladder;
-    initial_ladder.push(start);
-    ladder_queue.push(initial_ladder);
-    visited.insert(start);
+    ladder_queue.push({start});
+    visited.insert(start);  // Mark start word as visited immediately
 
     while (!ladder_queue.empty()) {
         int level_size = ladder_queue.size();
-        set<string> level_visited;
+        unordered_set<string> level_visited; // Track words visited in this level
 
         for (int i = 0; i < level_size; i++) {
-            stack<string> ladder = ladder_queue.front();
+            vector<string> current_ladder = ladder_queue.front();
             ladder_queue.pop();
-            string last_word = ladder.top();
+            string last_word = current_ladder.back();
 
             for (const string& word : word_list) {
                 if (!visited.count(word) && is_adjacent(last_word, word)) {
-                    stack<string> new_ladder = ladder;
-                    new_ladder.push(word);
-
+                    vector<string> new_ladder = current_ladder;
+                    new_ladder.push_back(word);
+                    
                     if (word == end) {
-                        vector<string> result;
-                        while (!new_ladder.empty()) {
-                            result.insert(result.begin(), new_ladder.top());
-                            new_ladder.pop();
-                        }
-                        return result; // Return the shortest ladder
+                        return new_ladder; // Found the shortest ladder
                     }
 
                     ladder_queue.push(new_ladder);
@@ -184,12 +179,11 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
             }
         }
 
-        for (const string& word : level_visited) {
-            visited.insert(word);
-        }
+        // Only mark words as visited after finishing the entire level
+        visited.insert(level_visited.begin(), level_visited.end());
     }
 
-    return {}; // No ladder found
+    return {};  // No word ladder found
 }
 
 
@@ -202,10 +196,33 @@ void print_word_ladder(const vector<string>& ladder) {
 
     for (size_t i = 0; i < ladder.size(); i++) {
         cout << ladder[i];
-        if (i != ladder.size() - 1) cout << " -> ";
+        if (i != ladder.size() - 1) cout << " ";
     }
-    cout << endl;
+    cout << "\n";
 }
+
+void verify_word_ladder(const vector<string>& ladder, const set<string>& word_list) {
+    if (ladder.empty()) {
+        cout << "Invalid: Empty ladder." << endl;
+        return;
+    }
+
+    for (size_t i = 1; i < ladder.size(); i++) {
+        if (!is_adjacent(ladder[i - 1], ladder[i])) {
+            cout << "Invalid word ladder: " << ladder[i - 1] << " -> " << ladder[i] << " is not adjacent." << endl;
+            return;
+        }
+        if (word_list.find(ladder[i]) == word_list.end()) {
+            cout << "Invalid word ladder: " << ladder[i] << " is not in the dictionary." << endl;
+            return;
+        }
+    }
+
+    cout << "Valid word ladder!" << endl;
+}
+
+
+
 
 // Verify if a given word ladder is valid
 void verify_word_ladder() {
