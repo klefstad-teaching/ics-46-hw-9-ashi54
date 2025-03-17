@@ -9,42 +9,36 @@ using namespace std;
 const int UNDEFINED = -1;
 
 vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& previous) {
-    int numVertices = G.size(); // Get the number of vertices in the graph
-    vector<int> distances(numVertices, INF); // Initialize distances to INF
-    vector<bool> visited(numVertices, false); // Track visited vertices
-    previous.assign(numVertices, UNDEFINED); // Initialize previous vector
+    int numVertices = G.size();
+    vector<int> distances(numVertices, INF);
+    vector<bool> visited(numVertices, false);
+    previous.assign(numVertices, -1);  // -1 means "no previous node"
 
-    // Min-heap priority queue (pair: {distance, vertex})
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> minHeap;
     
-    // Start with the source node
     distances[source] = 0;
-    previous[source] = UNDEFINED;
     minHeap.push({0, source});
 
-    // Process nodes in order of shortest distance
     while (!minHeap.empty()) {
-        int u = minHeap.top().second; // Extract vertex with smallest distance
+        int u = minHeap.top().second;
         minHeap.pop();
 
-        if (visited[u]) continue; // Skip already visited nodes
+        if (visited[u]) continue;
         visited[u] = true;
 
-        // Explore all edges from vertex u
         for (const Edge& edge : G[u]) {
             int v = edge.dst;
             int weight = edge.weight;
 
-            // If a shorter path to v is found, update distance and path
             if (!visited[v] && distances[u] + weight < distances[v]) {
                 distances[v] = distances[u] + weight;
-                previous[v] = u;
+                previous[v] = u;  // Update previous
                 minHeap.push({distances[v], v});
             }
         }
     }
 
-    return distances; // Return the shortest distances from the source
+    return distances;
 }
 
 
@@ -65,15 +59,15 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
 }
 
 void print_path(const vector<int>& path, int total_cost) {
-    if (path.empty() || total_cost == INF) { 
-        cout << "No path found." << endl;  
+    if (path.empty()) {
+        cout << "No path found." << endl;
         return;
     }
 
     for (size_t i = 0; i < path.size(); i++) {
-        if (i > 0) cout << " ";
         cout << path[i];
+        if (i != path.size() - 1) cout << " -> ";
     }
 
-    cout << " \nTotal cost is " << total_cost << endl;
+    cout << "\nTotal cost is " << total_cost << endl;
 }
